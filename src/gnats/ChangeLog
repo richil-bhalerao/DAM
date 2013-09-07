@@ -1,0 +1,870 @@
+2013-04-30  Alexandros Manoussakis <alex@juniper.net>
+PR: 873314
+* database.py (Database._create_fields):
+  - To avoid errors in databases without scopes such as the request db,
+    check if get_axis_name is empty and if so append a blank string to the
+    axis_names instead of attempting to append a nonexistent value from an
+    empty list which generates the error "IndexError: list index out of range".
+
+2013-04-25  Kamal Prasad Sharma <ksharma@juniper.net>
+PR: 873314
+* database.py:
+  - Remove 'FIELDAXES' commands and replace that command with 'LIST axisnames'
+    and apply same for all the fields.
+
+* server.py:
+  - Remove function 'fieldaxes', because it is no more in use.
+
+* tests/database_tests.py:
+* tests/server_tests.py:
+  - Remove functions related with 'fieldaxes' from the GNATS python protocol
+    test cases files.
+  - Also re-arrange the test cases numbers.
+
+2013-03-27  Alexandros Manoussakis <alex@juniper.net>
+PR: 868978
+* gnats/database.py (replace_table_row):
+  - Use trepl instead of repl since repl doesn't work on table fields.
+
+2012-12-18  Kamal Prasad Sharma <ksharma@juniper.net>
+PR: 841874
+* gnats/database.py:
+  - Handling the non-ASCII characters.
+
+2012-08-28  Kamal Prasad Sharma <ksharma@juniper.net>
+PR: 807861
+* gnats/database.py:
+  - Add logged-in user into the notify-list if flag 'set_flag_notify' is true.
+    Also do not add if same user id is already exist.
+
+2012-08-22  Kishorkumar Sorthiya <kishorbs@juniper.net>
+PR: 235704
+* gnats/codes.py:
+  -  There has been parameter changes and new index introduced in database to 
+     improve the performance of bulk PR queries. Due to these changes gnats-web 
+     displays Audit-Trail and Change-Log entries in random orders. To solve 
+     this issue, added 'order by' clause into the Audit-Trail and Change-Log 
+     queries.
+
+2012-07-26  Rajesh Abrol<rajesha@juniper.net>
+PR: 800886
+* gnats/servers.py (trepl):
+  - Corrected the corresponding TREPL command to be sent to gnatsd to
+    update a row. [TREPL need row-id as column name but earlier passed as row
+    number which needs to be sent as part of text to be updated].
+  - Reformat the text to be sent to gnatsd by manually adding a row number
+    preceding with column seperator and other values of the value_dict
+    separated by same column seperator.
+
+2012-07-20  Kishorkumar Sorthiya <kishorbs@juniper.net>
+PR: 725453
+* gnats/codes.py:
+  - Updated Field Separator. Gnats-web uses '\037' character as field 
+    separator which is some time presents into the description of the PR and 
+    causes issues in displaying data.
+
+2012-06-27  Kishorkumar Sorthiya <kishorbs@juniper.net>
+PR: 235704
+* gnats/codes.py:
+  - Added default username, password and db name to connect with oracle 
+    database.
+  - Added query to fetch audit-trail and it's fields.
+  - Added query to fetch change-log and it's fields.
+
+* gnats/database.py:
+  - Updated 'get_pr' function to fetch audit-trail and change-log data from the
+    oracle database directly.
+  - 'reg_fields' list and 'table_cols' dict are used to format a query to fetch 
+    all fields information from the gnatsd. So, removed 'Audit-Trail' and 
+    'Change-Log' fields from the 'reg_fields' list and 'table_cols' dict for not
+    to query this from gnatsd.
+  - Added '_get_change_log_audit_trail' function to fetch the data of 
+    audit-trail and change-log from the oracle database.
+  - Added '_exec_query' function to execute query and fetch records from the 
+    database to minimise code duplication.
+
+2012-05-25  Kishorkumar Sorthiya <kishorbs@juniper.net>
+PR: 769352
+* gnats/database.py:
+  - Removed code to send list of PRs in 400 chunks instead of all the PRs
+    together to gnatsd to fetch the information from database whenever
+    PRs are more than 400.
+  - This has been decided into the meeting with DBA on 17/05/2012.
+
+2012-05-24  Kamal Prasad Sharma <ksharma@juniper.net>
+PR: 695135
+ gnats/database.py:
+  - Construct a mapping of builtin name to real name for the command
+    "LIST builtinfields".
+
+2012-05-01  Jeff Chen <jeffchen@juniper.net>
+PR: 746189
+* gnats/database.py:
+  - Added code for GNATS-Clarify Integration. As per the requirement,
+    user should not update 'jtac-case-id' field manually but the
+    link/unlink functionality should work. This is after rollout. 
+
+2012-04-27  Kishorkumar Sorthiya <kishorbs@juniper.net>
+PR: 769352
+* gnats/database.py:
+  - Added code to send list of PRs in 400 chunks instead of all the PRs
+    together to gnatsd to fetch the information from database whenever 
+    PRs are more than 400. This improves the performance significantly.
+
+2012-04-05  Kamal Prasad Sharma <ksharma@juniper.net>
+PR: 695135
+* gnats/database.py:
+  - Removed hardcoded tuple 'BUILTIN_NAMES' of builtinfields and used the
+    gnatsd command (LIST builtinfields) to get the builtin field name.
+
+2012-02-27  Kamal Prasad Sharma <ksharma@juniper.net>
+
+* gnats/metadata.py:
+  - Change the logic to hardcode the path of the metadata files instead of
+    relying on django module.
+
+  - Updated variable name from 'dirname' to 'metadata_dir' for more
+    descriptive. 
+
+2012-02-20  Kamal Prasad Sharma <ksharma@juniper.net>
+* gnats/database.py:
+  - Iterate the for loop only if there is any value exist in the variable
+    'table_cols'.
+
+2012-02-15  Kamal Prasad Sharma <ksharma@juniper.net>
+* gnats/database.py:
+  - Removed the column 'username' and 'datetime' from the template
+    'audit-trail.html' to make audit-trail view collapse/expand. Sometimes when
+    it reads data from the cache then it does not find those fields ('username'
+    and 'datetime') and it throws 'TemplateSyntaxError' error. To avoid this
+    error, set the value as "table_cols = 'all'", if 'audit-trail' contains
+    only 2 column name in the list.
+
+2012-01-24  Kishorkumar Sorthiya <kishorbs@juniper.net>
+   * gnats/database.py:
+   - Removed creation of sort_key list at the time of metadata formation.
+     This is required only if user requested sort the result page on enum
+     fields.
+   - Colleting all enum fileds in to the reqsort list if the requested sort
+     by user is based on enum fields.
+   - Creating sort_key list for the enum fields if user has requested to
+     sort the result based on enum field.
+
+2011-11-30  Kamal Prasad Sharma <ksharma@juniper.net>
+   * gnats/database.py:
+   - Enhanced Gnatsweb python protocol library to read data from the file
+     instead of sending command to gnatsd for each request.
+
+   * gnats/server.py:
+   - Reduced multiple gnatsd connections from Gnatsweb to the minimum
+     required connections.
+
+   * gnats/metadata.py (New file):
+   - Added a new module to fetch the metadata from pickle file for internal
+     gnats user ('default').
+
+2011-08-27  Kamal Prasad Sharma  <ksharma@juniper.net>
+
+   * server.py:
+   - Use "gnatatui" instead of "gnats" as username and * as password for
+     connection. This makes connections from gnatsweb easy to separate
+     out from other gnats-internal processes (queue-pr, etc.).
+
+   * database.py:
+   - Remove field 'Severity' & 'Priority' from the tuple BUILTIN_NAMES.
+     As both of these fields are no more in use.
+
+2011-07-23  Kamal Prasad Sharma  <ksharma@juniper.net>
+
+    * gnats/__init__.py:
+      - Add a new parameter "passwd" to get the database handle for the server
+        connection.
+      - Removing the indentation from the example python protocol code.
+
+2010-11-30  Kamal Prasad Sharma  <ksharma@juniper.net>
+
+    * database.py:
+      Remove unwanted loop for 'single_valued_fields' and 'multi_valued_fields'
+      to avoid sending all fields to gnatsd while editing a PR. Send only those
+      field-value in the format such as ">field: value", which got updated from
+      Gnatsweb, while submitting to gnatsd.
+
+2009-06-26  Kamal Prasad Sharma  <ksharma@juniper.net>
+
+    * database.py: Previous regex was correct but it was looking only
+    beggining line. Add a flag "re.MULTILINE", so that it will look for a line
+    starting with '>' and replace '>' with ' >' in anywhere in a multiline 
+    text on submission.
+
+    * tests/database_tests.py (T04_DatabaseMethods):
+    Add a testcase to add a space at the beginning of the multitext field, if
+    it contains data in the format '>fld: fld-value'.
+
+2009-03-10  Kamal Prasad Sharma  <ksharma@juniper.net>
+
+    * database.py: Add a regex, which will look for a line starting with '>' and
+    replace '>' with ' >' in a multiline text on submission.
+
+2009-01-22  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py: Added package-level docstring, including example code.
+	(metadata_level, *_METADATA): Package variable and values to control
+	amount of metadata loaded.
+	(refresh_metadata_automatically): Controls refresh on server connection
+	in Database.get_handle.
+
+	* codes.py (DEFAULT_PORT): New constant.
+
+	* server.py (ServerConnection): Add class docstring.
+	(Server): Add class docstring.  Use codes.DEFAULT_PORT in __init__ params
+	instead of hardcoding value.
+
+	* database.py (DatabaseHandle): Add class docstring.
+	(DatabaseHandle.edit_pr, query): Require MINIMAL_METADATA.
+	(TableField): Add docstring.
+	(EnumField.load_enum_values): Pull this out into a public function, for
+	flexibility.
+	(EnumField.__init__): Call load_enum_values if metadata_level is right.
+	(EnumField.list_values): Require FULL_METADATA.
+	(Field): Better docstring.
+	(Database): Add class docstring.
+	(Database.validate_field): Require FULL_METADATA.
+	(Database.unparse_pr): Require MINIMAL_METADATA.
+	(Database.build_format, list_fields, builtin): Require MINIMAL_METADATA.
+	(Database.update_metadata, get_handle): Factor metadata update out of
+	get_handle, don't call unless metadata_level and automatically_load_metadata
+	are right.
+	(Database._get_metadata): Control metadata loading based on
+	gnats.metadata_level.
+	(Database._create_fields): Skip description and default value if
+	metadata_level < MINIMAL_METADATA:
+	(_require_metadata): Helper function that raises if metadata less than
+	given value.
+
+	* tests/server_tests.py (setup_fake_socket_server_and_connection,
+	T02_Protocol_command): Test handling of socket.error.
+
+	* tests/database_tests.py (T08_MetadataLevels): Add tests of different
+	settings for metadata_level and refresh_metadata_automatically.
+	(T01_DatabaseMetadata): Add tests for new update_metadata method.
+	(T03_EnumField): Add test for load_enum_values method.
+
+	* server.py (__init__, command, _server_reply, _read_server, _send_text):
+	Raise GnatsNetworkException if the socket raises a socket.error (missed
+	this earlier).
+
+2008-11-13  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (_get_reply): Add all returned text to the exception thrown
+	on a GNATS error, instead of just the last line.  Fixes PR 394419.
+	(__init__, command, _server_reply, _read_server, _send_text): Raise
+	GnatsNetworkException if the socket raises an IOError.  Cuts down on
+	the error emails from Django.
+
+	* tests/server_tests.py: Add tests for the above changes.
+
+2008-09-02  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (_server_reply, _read_server, _send_text): Improve output of
+	debug and protocol_debug.
+
+	* database.py (unparse_pr): Add comment about alternate algorithm that gives
+	output very close to --full.
+
+2008-08-15  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database.ENVELOPE_FIELD_INFO, __init__, _get_metadata): The
+	from: envelope field is now initial-entry.
+
+	* tests/database_tests.py (T06_Validate): The from: envelope field is now
+	an initial-entry field.
+	(FakeServerConnectionForDB): Wrap some list returns in list() to avoid
+	poisoning class-static values.
+
+2008-08-14  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (builtin): Return the empty string if a non-existent builtin
+	is requested.
+
+	* tests/database_tests.py (T04_DatabaseMethods): Add test for new builtin()
+	functionality.
+
+2008-08-08  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.query): Better exception handling when
+	building sort function.
+
+	* server.py (ServerConnection.cfgt): CFGT now exists, fix implementation.
+
+	* database.py (Database.get_handle): Rework cfgt handling, now that the
+	gnatsd feature exists and we can test it.
+
+	* tests/database_tests.py: Update/implement CFGT related tests.
+
+2008-08-04  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.edit_pr): Raise error if no editable fields
+	are supplied.
+	(Database.unparse_pr): Strip leading and trailing whitespace from the
+	return value.  Prevents spurious newline addition to Unformatted field
+	on edit.
+
+	* tests/dbhandle_tests.py: Adjust for new database.py behavior.
+
+	* tests/database_tests.py: Adjust for new database.py behavior.
+
+2008-08-03  Janet Yu  <jwy@juniper.net>
+
+    * database.py (append_to_field, replace_field): Fix bug with swapped
+    arguments in function call.
+
+2008-07-31  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (ServerConnection.command): Strip most control characters
+	from the command before sending it to gnatsd.  Prevents hard-to-find errors.
+
+	* __init__.py (allow_cmd_control_chars): Global flag to control stripping
+	of ctrl characters in ServerConnection.command(); defaults to true (strip).
+	Add doco for allow_cmd_control_chars and protocol_debug to docstring.
+
+	* tests/server_tests.py (T02_Protocol_command): Add tests for
+	ServerConnection.command().
+
+2008-07-28  Janet Yu  <jwy@juniper.net>
+
+    * database.py (DatabaseHandle.edit_pr): Fix bug with PR number missing from
+    error message.
+
+2008-07-16  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.edit_pr): Skip table-fields when filling pr
+	with current values.
+
+	* tests/dbhandle_tests.py (T04_Edit_pr): Add test for above bug.
+
+2008-07-14  Janet Yu  <jwy@juniper.net>
+
+    * database.py (Database._create_fields): Don't force real names to be
+    title-cased, in case some of them should be in all capitalized letters.
+
+2008-07-10  Janet Yu  <jwy@juniper.net>
+
+    * database.py (Database._create_fields): Force real names to be
+    title-cased, in case they aren't always created as such in the database.
+
+2008-07-10  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.get_pr): Raise if no PR number supplied
+	(otherwise you try to pull in the entire database).
+
+	* tests/dbhandle_tests.py (T03_Get_pr): Add test for missing PR number.
+
+	* server.py (ServerConnection.quer): Coerce 'prs' list content to strings.
+
+2008-07-09  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/database_tests.py (T03a_TableField): Add test for display name.
+
+	* database.py (Database._create_fields): Take an optional list of "display"
+	field names.  Used for creating table-field columns.
+	(TableField.__init__): Pass display names of columns to _create_fields, so
+	that the name attribute has the unqualified, capitalized name.
+
+2008-07-08  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py (ENCODING_ERROR): Change unicode encoding error strategy
+	from "strict" to "replace", which will replace bogus characters with an
+	error character.
+
+2008-07-02  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (EnumField): Profiling identified EnumField __init__ as
+	one of the big bottlenecks, but I couldn't find an optimization.  Noted
+	it in the comments for future perusal.
+
+2008-06-30  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (_get_reply): Don't log 400-series errors, which are user
+	problems, and will just clutter up the logs.
+
+2008-06-27  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database._unparse_pr, _unparse_field): Build PR text
+	with correct newline handling.
+	(_fix_multiline_val): Canonicalize newlines, and ensure that there is a
+	newline on the end of the string, unless it's the empty string.
+
+	* tests/database_tests.py (T04_DatabaseMethods): Add _unparse_pr test for
+	trailing whitespace preservation.  Adjust other unparse_pr tests for new
+	behavior.
+
+2008-06-26  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (parse_pr): Remove this vestigial method, never implemented.
+
+2008-06-24  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (TableField): Store columns under their unqualified name,
+	and give them an unqualified_name attribute.
+	(DatabaseHandle._validate_table_columns): Canonicalize column names to the
+	unqualified form.
+	(Database._unparse_field, validate_field): Accept multienum values as
+	either string or iterable.
+
+	* server.py (ServerConnection.lockn): If LOCKN not implemented, fall back
+	to LOCK.
+	* tests/database_tests.py (T05_ValidateField): Add tests for multienum.
+	(T04_DatabaseMethods): Add test for multienum unparsing.
+
+	* tests/dbhandle_tests.py (T02_Query.test_28_fetch_tfield_parsed_all):
+	Adjust to new behavior of _validate_table_columns.
+
+	* tests/database_tests.py (T05_ValidateField): Add tests for multienum.
+	(T04_DatabaseMethods): Add test for multienum unparsing.
+
+	* tests/dbhandle_tests.py (T02_Query.test_28_fetch_tfield_parsed_all):
+	Adjust to new behavior of _validate_table_columns.
+
+2008-06-22  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database.__init__, _get_metadata): Keep track of table-fields
+	in the db.
+	(Database._validate): Exclude table-fields.
+	(TableField.__init__): Downcase column names.  Store columns under fully
+	qualified name and bare name.
+	(DatabaseHandle._validate_table_columns): Substantially rebuilt, now returns
+	a dict filtered based on needed fields.
+	(DatabaseHandle._format_query): Field and column formatting, factored out
+	of query and _get_pr_fields.
+	(DatabaseHandle.query): Call _format_query.  Add docstring about table-field
+	handling.  Clean up table-field parsing.
+	(DatabaseHandle.get_pr): Now takes table_cols arg to control parsing.
+
+	* tests/dbhandle_tests.py (T02_Query): Added tests for table-fields.
+	(T03_Get_pr): Added tests for table-fields, adjusted many other tests to
+	accomodate necessary changes.
+	(T04_Edit_pr): One table-field related test.
+
+	* tests/database_tests.py (FakeServerConnectionForDB): Rebuilt to add
+	table-field support.
+	(T03a_TableField): Tests for TableField class.
+	(T04_DatabaseMethods): Table-field tests, and adjustments to other tests
+	affected by the changes.
+
+	* tests/server_tests.py (T06_ProtocolCmdMethods): Add test for TQFMT.
+
+2008-06-20  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (ServerConnection.tqfmt): Send TQFMT instead of QFMT.  Duh.
+
+2008-06-17  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/connect.py: Simple program that connects to gnatsd and fetches
+	db metadata.
+
+	* database.py (TableField): Downcase column names.
+
+	* server.py (Server): Coerce port number to an int.
+
+2008-06-10  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (ServerConnection.lockn): New method for LOCKN command, which
+	locks without returning the PR text.
+
+	* database.py (Field): Add ability to mark a field as read-only for UI
+	purposes, retaining real read-write status behind the scenes.
+	(Database.unparse_pr, DatabaseHandle.edit_pr): Honor Field.really_read_only
+	flag.
+	(DatabaseHandle.lock_pr): Use lockn instead of lock.
+
+	* tests/dbhandle_tests.py (T04_Edit_pr): Test _real_read_only.
+	(T05_MiscEditMethods): Change lock to lockn.
+
+	* tests/database_tests.py (T02_FieldMetadata): Add test for _real_read_only.
+	(T04_DatabaseMethods): Test _real_read_only in unparse_pr.
+
+	* tests/server_tests.py (T06_ProtocolCmdMethods): Add LOCKN tests.
+
+2008-06-04  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (ServerConnection.fvld): Take extra parameters as given.
+
+	* database.py (Database._get_metadata, _create_fields, __init__): Builtins
+	(states, categories, responsibles & submitters) no longer stored; the same
+	data can be found via fields['builtinfield:category'].values_dict.
+	(EnumField): Now stores a dict of value:{subfields:sub_vals},
+	like the builtins used to do.
+
+	* codes.py: Updated with codes from latest gnats sources.
+
+	* tests/database_tests.py (FakeServerConnectionForDB): Update for new
+	fvld/subfield enum regime.
+	(T01_DatabaseMetadata): Remove builtin lists tests.
+	(T03_EnumField): Add test for values_dict.
+
+	* tests/server_tests.py (T06_ProtocolCmdMethods.test_42_fvld_complex): No
+	longer a failure.
+
+2008-06-03  Janet Yu  <jwy@juniper.net>
+
+    * database.py (Database.validate_field): Validation should check for exact
+    match, not lowercased, and accept default value.
+
+2008-06-02  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/database_tests.py (T01_DatabaseMetadata.test_13_callback): Test
+	new callback feature.
+	(T04_DatabaseMethods.test_06_build_format_builtin): Rework after removal
+	of prepend_number arg.
+
+	* database.py (Database._get_metadata): Add a callback, which is called
+	after metadata refresh.
+	(Database.build_format): Now usable for both QFMT and TQFMT formats.
+	(Database.unparse_pr, _unparse_field): Skips table-fields.
+	Remove prepend_number optional arg.
+	(Field.SORT_TYPES): Add 'table' type.
+	(EnumField): Remove unneeded lcname param.
+	(TableField): New class for table-fields.
+	(DatabaseHandle.query): Make field_names arg mandatory, raise if it
+	doesn't have at least one element.  Handle table-fields in field_names,
+	raise if attempt to sort on a table-field.
+	(DatabaseHandle._validate_table_columns): Check table-field columns.
+	(DatabaseHandle.get_pr, _get_pr_fields): Handle table-fields.
+	(DatabaseHandle.edit_pr): Don't try to edit table-fields.
+	(DatabaseHandle.append_to_field, replace_field): Change argument ordering.
+	(DatabaseHandle.append_to_table, replace_table_row): Table-field support.
+
+	* server.py (ServerConnection): Save a ref to Server, report host & port
+	in connection exception.
+	(ServerConnection.tqfmt, tappn, trepl): Add table-field specific commands.
+	(ServerConnection.appn, repl): Change argument ordering to conform to
+	actual protocol command.
+
+	* codes.py (COL_SEP, ROW_SEP): Used for table-field formats.
+
+	* tests/server_tests.py (T06_ProtocolCmdMethods): Adjust for changed
+	param ordering for appn & repl.
+
+	* tests/dbhandle_tests.py (T02_Query.test_01_raises_empty_expr): Field_names
+	param no longer optional.
+	(T03_Get_pr): Adjust mock methods to changed parameters.  Add check for
+	table_cols to _get_pr_fields tests.
+
+2008-05-29  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database._create_fields): Refactored field creation out
+	of _get_metadata, because it's also used by table-field constructor.
+
+	Added __str__ and __repr__ methods to all non-exception classes to
+	improve debugging and interactive use.
+
+	Wrapped all lines over 81 characters.
+
+2008-05-28  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py (LastModifiedTimeException): Now takes old_time and new_time
+	args.
+
+	* database.py: (Database._unparse_field, unparse_pr): Implementing PR
+	edit and create in gnatsweb revealed all sorts of bugs in these methods.
+	(Database.get_handle): Add logging.
+	(DatabaseHandle.lock_pr): Default for session should be the empty string.
+	(DatabaseHandle.edit_pr): Fetch envelope fields in old PR.  Better
+	exception messages.
+	(DatabaseHandle): Add simple logging at info level to all public methods.
+
+	* tests/database_tests.py (T04_DatabaseMethods): Test updated unparse_pr.
+
+	* tests/dbhandle_tests.py (T04_Edit_pr): Add envelope fields to get_pr test.
+	(T05_MiscEditMethods): Adjust lock_pr() tests.
+
+2008-05-27  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.get_pr): Add one_scope param to control
+	fetching of all (default) or one scope when given a scoped PR number.
+
+	* tests/dbhandle_tests.py (T03_Get_pr): Adjust to new one_scope param.
+
+2008-05-25  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/dbhandle_tests.py (T01_MetadataAndUtilityMethods): Test
+	DatabaseHandle._numeric_sortable().
+	(T02_Query): Test numeric sorting.
+
+	* tests/server_tests.py (T02_Protocol_server_reply, T04_Protocol_get_reply):
+	Check for error code in exceptions.
+
+2008-05-24  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/database_tests.py: Remove tests for decode_error().
+	(T01_DatabaseMetadata): Add test for states builtin, update tests for other
+	builtins.
+
+	* server.py (ServerConnection._get_reply, _server_reply): Return error
+	code in Exception.
+
+	* database.py (Database.__init__, _get_metadata): Revise handling of
+	builtin categories, responsibles, states & categories lists.  Now stored
+	as a list of dicts.
+	(Database._builtin_list): Fetch builtin lists.
+	(Database.decode_error): Removed, functionality pulled up to UI layer.
+	(Field.SORT_TYPES): Fields have a configurable sorting strategy.
+	(EnumField.__init__): Pass in the list of values; avoids double fetch
+	for builtin enum fields.
+	(DatabaseHandle.query): Sort by Field's sorting strategy.  Implement
+	'numeric' (by release) strategy.
+	(DatabaseHandle._numeric_sortable): Numeric sorting.
+
+	* __init__.py (GnatsException): Now takes an option error code param.
+
+2008-05-21  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle._get_base_prnum): Strip off any scope data,
+	and convert input to a string.
+	(DatabaseHandle.get_pr, lock_pr, unlock_pr, edit_pr, append_to_field,
+	replace_field): Use _get_base_prnum().
+	(Database.builtin): Return the name of the field corresponding to the
+	builtinfield name.
+	(Database._get_metadata, BUILTIN_NAMES): Populate builtin fields, via a
+	temporary hack (waiting on a PR fix).
+	(DatabaseHandle.edit_pr): Use database.builtin() to get last-modified.
+
+	* tests/database_tests.py (FakeServerConnectionForDB): Change names of
+	some fields to exercise the builtinfield stuff in Database.
+	(T01_DatabaseMetadata, T04_DatabaseMethods): Test builtinfield stuff.
+
+	* tests/dbhandle_tests.py: Update for new _get_base_prnum functionality.
+	Change field names to accomodate new builtinfield testing needs.
+
+2008-05-16  Dirk Bergstrom  <dirk@juniper.net>
+
+	* codes.py (FLAG_REQ_COND, FLAG_ALLOW_ANY_VALUE): Add misssing flags.
+
+	* database.py (Database.decode_error, custom_errors): Fix decode_error().
+	(Database.validate_*): Move here from DatabaseHandle.  Fix bugs found in
+	unit testing.
+	(Field): Add allowAnyValue and req-cond flags.
+	(DatabaseHandle.check_pr): Renamed from validate_CHEK, bugfixed.
+
+	* tests/dbhandle_tests.py (T05_MiscEditMethods): Add test for check_pr.
+
+	* tests/database_tests.py (T04_DatabaseMethods): Tests for decode_error().
+	(FakeServerConnectionForDB): Add allowAnyValue and req-cond flags.
+	(T02_FieldMetadata): Tests for allowAnyValue and req-cond flags.
+	(T05_ValidateField, T06_Validate, T07_ValidatePR,): Tests for validation
+	methods.
+
+2008-05-15  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (ServerConnection._server_reply, _read_server): Convert all
+	gnatsd data to unicode.
+	(ServerConnection.command, _send_text): Encode data sent to gnatsd into
+	appropriate encoding.
+
+	* __init__.py (ENCODING, ENCODING_ERROR): Used for unicode translation.
+
+	* database.py (DatabaseHandle.edit_pr): Check for empty inputs.  Fetch
+	only writeable fields and last-modified for curr_pr.  Don't pull non-
+	existent envelope fields from curr_pr.
+	(DatabaseHandle.append_to_field, replace_field): Call conn.editaddr().
+
+	* tests/dbhandle_tests.py (T02_Query): Adjust for new exception classes.
+	Add sorting by builtinfield:number.
+	(T03_Get_pr): Adjust for new exception classes.
+	(T04_Edit_pr): Tests for edit_pr().
+	(T05_MiscEditMethods): Tests for submit_pr, lock_pr, unlock_pr,
+	append_to_field & replace_field.
+
+	* tests/database_tests.py (T01_DatabaseMetadata): Add tests for
+	number_field.
+
+2008-05-14  Dirk Bergstrom  <dirk@juniper.net>
+
+	* tests/database_tests.py (T01_DatabaseMetadata.test_08_initial_entry):
+	Implement.
+	(T04_DatabaseMethods.test_11_unparse_pr_no_number, test_11_unparse_pr_number):
+	Adjust to new behavior of unparse_pr().
+
+2008-05-13  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database.number_field, _get_metadata): Keep track of which
+	field is builtinfield:number.  Track initial input fields.
+	(Database.unparse_pr): Add the PR number, if present in the dict.
+	(DatabaseHandle.query): Raise more specific InvalidFieldNameException.
+	Use database.number_field.
+	(DatabaseHandle.get_pr): Raise more specific InvalidFieldNameException
+	and InvalidFieldNameException.
+	(DatabaseHandle.lock_pr, unlock_pr, edit_pr, append_to_field,
+	replace_field): Implement methods.
+	(DatabaseHandle.validate_*): PR and field validation methods.
+
+	* __init__.py (PRNotFoundException, InvalidFieldNameException,
+	LastModifiedTimeException): New specialized exception types.
+
+	* tests/database_tests.py (FakeServerConnection._lists): Support
+	"initialinputfields".
+
+2008-05-11  Dirk Bergstrom  <dirk@juniper.net>
+
+	* server.py (Server.CACHE_TIME): Bump up to 10 minutes.
+	(ServerConnection.chek,subm,appn,edit,vfld): Return results of _get_reply,
+	not _server_reply.
+
+	* database.py (Database.unparse_pr): Finish implementation.
+	 (Database._unparse_field): Helper method.
+	 (DatabaseHandle.get_pr): Raise on empty field list.  Handle int pr numbers.
+	 Handle getting only scoped fields.
+
+	* tests/server_tests.py (T06_ProtocolCmdMethods.__init__): Fake _get_reply
+	instead of _server_reply.
+
+	* tests/dbhandle_tests.py (T03_Get_pr): Tests for get_pr().
+
+	* tests/database_tests.py (T04_DatabaseMethods): Add tests for unparse_pr.
+
+2008-05-07  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.get_pr): Do the right thing with pr-scope.
+	Store scope info as a list of dicts.  Index scopes by lowercase axis name.
+	(Database.get_metadata): Index multi_valued fields by lowercase axis name.
+	(Field): Store axis name in lowercase.
+
+2008-05-06  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.query): Fix another bug in sorting.
+	(DatabaseHandle.get_pr): Strip scopes from prnum when fetching non-scoped
+	fields.
+
+	* tests/dbhandle_tests.py: Try (unsuccessfully) to reproduce a bug, but
+	at least I got some more code-paths tested.
+
+2008-05-05  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.query): Don't prepend Number, or sort by it,
+	by default.
+
+	* tests/dbhandle_tests.py: Adjust tests to new query sorting behavior,
+	add a couple tests for pure numeric sorting.
+
+	* database.py (DatabaseHandle.get_pr): More multi-state support, not
+	done yet.
+	(DatabaseHandle.submit_pr): Partial implementation.
+	(Database.unparse_pr): Partial implementation.
+	(Database._get_metadata): Add some thread-safety.  Track multi-valued
+	and single-valued fields.
+	(Database, Field): Add support for PR header/envelope fields.
+
+	* server.py (ServerConnection._send_text): Always dot-escape input.
+	(ServerConnection.unparse_pr): Moved to Database.
+
+	* tests/database_tests.py (T04_DatabaseMethods): Add unparse_pr test.
+	Adjust to new build_format behavior.
+
+	* tests/server_tests.py (T05_UtilityMethods): Remove unparse_pr test.
+	(T05_UtilityMethods.test_04_send_text_other_raises,
+	test_03_send_text_pr_dict): No longer needed.
+
+2008-05-01  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (DatabaseHandle.get_pr): Now functional, though not
+	fully tested.
+	(DatabaseHandle._get_pr_fields): Utility function for get_pr.
+	(Database._get_metadata): Fetch FIELDAXES (for multi-state support).
+	(Field.__init__): Add axes param.
+
+	* tests/database_tests.py (FakeServerConnectionForDB): Add fieldaxes
+	method.
+
+	* tests/runtests.py (run_all_suites): Fixed a format picture bug.
+
+	* server.py (ServerConnection._SERVER_REPLY_RE): Remove trailing white
+	space (\r\n).
+	(ServerConnection.quer): Handle integer pr number input.
+
+	* tests/server_tests.py: Add network newlines (\r\n) to fake socket
+	output, because that's what gnatsd actually sends.
+
+2008-04-30  Dirk Bergstrom  <dirk@juniper.net>
+
+	* database.py (Database._get_metadata): Call conn.list() instead of
+	conn.command().
+	(Database.build_format): Change param from 'fields' to 'field_names'.
+	(EnumField.__init__): Call conn.fvld() instead of conn.command().
+	(DatabaseHandle.query):  Change param from 'fields' to 'field_names'.
+	Validate sort direction codes.  Better error message for unrequested
+	sort fields.  Don't put format in temp variable.
+
+	* codes.py (FLAG_REQUIRE_CHANGE_REASON): Flag is mixed case.
+
+	* __init__.py (GnatsAccessException): Inherit from GnatsException.
+
+	* tests/dbhandle_tests.py: Tests for DatabaseHandle metadata and query().
+
+	* tests/database_tests.py: Now populated with a big pile of tests.
+
+	* tests/server_tests.py: Switched to 2-digit numbering.  Added harness
+	code.
+
+	* tests/runtests.py: Harness to run tests with some extra output.
+
+2008-04-29  Dirk Bergstrom  <dirk@juniper.net>
+
+	Refactored classes into separate modules to keep file size manageable,
+	and make it a bit easier to follow changes.
+
+	* server.py: Moved Server, ServerConnection and DelimtedData here.
+
+	* database.py: Moved Database, Field, EnumField and DatabaseHandle here.
+
+	* __init__.py: Fixed spurious space between % & s in formats.
+
+	* tests/server_tests.py: Finished testcases for protocol commands.  Three
+	failures for not-yet implemented commands.
+
+2008-04-28  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py (ServerConnection._send_pr_text): Variable renaming for
+	clarity.
+	(ServerConnection.appn & repl): Implemented.
+	(ServerConnection.parse_pr): New function stub.
+	(DelimitedData._record_sep): Should end with '\r\n'.
+	(ServerConnection.command): Replace newlines with spaces.
+	(Database.build_format): Fix bug in date picture format.
+	(Database.get_handle): Use dbh.conn instead of conn, to avoid NPE.
+	(ServerConnection._send_pr_text): Renamed to _send_text.  Now sends
+	period terminator and flushes _sfile.  Fixed regex  Added debugging output.
+	(ServerConnection.appn): Forgot to send the prnum in command.
+
+	* tests/server_tests.py: Added tests for utility methods.  Tests for
+	another 13 protocol command methods.
+
+2008-04-28  Janet Yu  <jwy@juniper.net>
+
+	* __init__.p (Database.get_handle): Check for conn object before
+	using it.
+
+2008-04-27  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py: Renamed DatabaseConnection to DatabaseHandle to clarify
+	usage.  Various methods and calls adjusted appropriately.
+	(Server._validate_conn): Made private.
+	(Server.dbuser): Supplied fake name/password.
+	(ServerConnection.strict_protocol): New attr to control ridgidity of
+	parsing.
+	(ServerConnection._server_reply): Don't return raw_reply.
+	(ServerConnection._read_server): Don't strip newlines for parsed data.
+	Rename 'text' to 'output' for clarity.
+	(ServerConnection._get_reply): Tighten up and correctify based on testing.
+	(ServerConnection._parse_access_level): Return 'none' on unparseable.
+	(ServerConnection.dbdesc): Return only desc, not [desc].
+	(ServerConnection.chdb): Raise GnatsAccessException on access denied.
+	(ServerConnection.user): Parse command output properly.
+	(ServerConnection.lkdb & undb): Implement.
+	(DelimitedData): Added newline to record sep.
+
+	* tests/server_tests.py: Unit tests for Server and Connection protocol
+	parsing.  Tests for some protocol commands.
+
+2008-04-25  Dirk Bergstrom  <dirk@juniper.net>
+
+	* __init__.py (Server): Get gnatsd version string upon connection.

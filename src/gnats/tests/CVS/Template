@@ -1,0 +1,36 @@
+PR:
+Reviewed by:
+
+CVS: 
+CVS: Instructions:
+CVS:
+CVS: Description
+CVS:   All commits require a meaningful description of the change.
+CVS:
+CVS:   Please provide a description for the change you are committing
+CVS:   and/or describe the problem you are fixing.
+CVS:
+CVS: "PR" field
+CVS:	Please fill in the PR field with the problem report number (only the
+CVS:	number, do not add the category) that you are closing with this
+CVS:	commit.  If you're fixing multiple PR's, separate them with spaces.
+CVS:	"PR: 2222 2234 2556"
+CVS:
+CVS: "Reviewed by" field
+CVS:	If this change has been reviewed by a code reviewer, please place
+CVS:	the unix login name of the code reviewer in this field.
+CVS:
+CVS: Please note: You MUST specify at least one PR in order to commit.
+CVS: All PRs listed must meet the following criteria:
+CVS: 
+CVS:   1. They must exist in the Gnats database.
+CVS: 
+CVS:   2. They must not be in the "closed" state.
+CVS: 
+CVS:   3. Their "Responsible" party must be you or one of the persons
+CVS:      specified in the Reviewed-by line UNLESS the Class or
+CVS:      Category fields indicate that the PR is for a new feature.
+CVS: 
+CVS: For further details, please see the instructions at
+CVS: http://www-in.juniper.net/eng/techpubs/internal-training/cvslogs.htm 
+CVS:
